@@ -1,31 +1,6 @@
-import{readFileSync as a,readdirSync as b,mkdirSync as c,writeFileSync as d}from"node:fs";
-let S,D,E=process.env,L;
-const I=E.MAKEFUN_INPUT_DIR??"/input",O=E.MAKEFUN_OUTPUT_DIR??"/output";
-function fd(p,B,e){let v=new Set([p]),q=[p],m=new Map();for(let h=0;h<q.length;h++){let x=q[h];for(let i=0;i<4;i++){let y=x+D[i];if(L[y]!="#"&L[y]!="\n"&!B.includes(y)&(y/S|0)!=e&!v.has(y)){v.add(y);q.push(y);m.set(y,[x,i])}}}return[v,m]}
-function lv(G,cs){let v=new Set(G),q=[...G];for(let h=0;h<q.length;h++){let y=q[h];for(let i=0;i<4;i++){let x=y-D[i],z=x-D[i];if(cs.has(x)&!v.has(x)&L[z]!="#"&L[z]!="\n"){v.add(x);q.push(x)}}}return v}
-function K(B,v){return B+","+Math.min(...v)}
-function rm(B0,G,cs,st){
- let V=lv(G,cs),q=[[B0,fd(st,B0)[0],[]]],sn=new Set([K(B0,q[0][1])]);
- for(let h=0;h<q.length;h++){
-  let[B,v,path]=q[h];
-  if(B.every(x=>G.has(x)))return path;
-  for(let b of B){
-   for(let i=0;i<4;i++){let t=b+D[i];
-    if(!cs.has(t)|!V.has(t)|B.includes(t)|!v.has(b-D[i]))continue;
-    let N=B.map(x=>x==b?t:x);N.sort();
-    let v2=fd(b,N)[0],k2=K(N,v2);
-    if(!sn.has(k2)){sn.add(k2);q.push([N,v2,[...path,[b,i]]])}
-   }
-  }
- }
- return null;
-}
-function sv(){
- S=L.indexOf("\n")+1;D=[-S,S,-1,1];
- let B=[],G=new Set(),P=0;
- for(let p=0;p<L.length;p++){let c=L[p];if(c=="$"|c=="*")B.push(p);if(c=="."|c=="*")G.add(p);if(c=="@"|c=="+")P=p}
- let hy=(P/S)|0,mv="",GB=[...B];
- for(let x=0;x<S-1;x++)for(let dy of[-1,1]){let y=hy+dy,p=y*S+x;if(L[p]!="#"){let cs=fd(p,[],hy)[0],ps=rm(GB.filter(b=>cs.has(b)),G,cs,P);if(!ps)return"";for(let[b,i]of ps){let[,m]=fd(P,GB),s="",q=b-D[i];while(q!==P){let[z,j]=m.get(q);s="udlr"[j]+s;q=z}mv+=s+"udlr"[i];GB[GB.indexOf(b)]=b+D[i];P=b}}}
- return mv;
-}
-for(let id of b(I)){L=a(I+"/"+id+"/level.txt","utf8");c(O+"/"+id,{recursive:!0});d(O+"/"+id+"/solution.txt",sv()+"\n")}
+import F from"node:fs"
+let E=process.env,I=E.MAKEFUN_INPUT_DIR,O=E.MAKEFUN_OUTPUT_DIR,S,D,L,G,J,K,i
+function fd(p,B,e){let m=new Map([[p,0]]);for(let x of m.keys()){for(i=4;i--;){let y=x+D[i];if(L[y]!=35&!B.includes(y)&!m.has(y)&(y/S|0)!=e)m.set(y,i)}}return m}
+function rm(B0,c,st){let q=[[B0,st,[]]],n=new Set([B0+","+st]),N,k,t;for(let[B,p,pa]of q){if(B.every(x=>G.has(x)))return pa;let v=fd(p,B);for(let b of B)for(i=4;i--;)t=b+D[i],c.has(t)&!B.includes(t)&v.has(b-D[i])&&(N=B.map(x=>x==b?t:x),N.sort(),k=N+","+b,n.has(k)||(n.add(k),q.push([N,b,[...pa,[b,i]]])))}return null}
+function Z(){S=L.indexOf(10)+1,D=[-S,S,-1,1];let B=[],P=0;G=new Set();for(let[p,c]of L.entries())c%6==0&&B.push(p),c>41&c<47&&G.add(p),c%21==1&&(P=p);let y=(P/S)|0,m="",W=B;for(let x=S-1;--x;)for(J of[-1,1]){K=(y+J)*S+x;if(L[K]!=35){let f=fd(K,[],y),s=rm(W.filter(b=>f.has(b)),f,P);if(!s)return"";for(let[b,i]of s){let g=fd(P,W),C=t=>t==P?"":C(t-D[g.get(t)])+"udlr"[g.get(t)];m+=C(b-D[i])+"udlr"[i];W[W.indexOf(b)]=b+D[i];P=b}}}return m}
+for(let k=0;++k<6;)J=I+"/i00"+k,K=O+"/i00"+k,L=F.readFileSync(J+"/level.txt"),F.mkdirSync(K,{recursive:1}),F.writeFileSync(K+"/solution.txt",Z())
